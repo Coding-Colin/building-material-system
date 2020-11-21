@@ -1,0 +1,138 @@
+<html lang="en">
+<head>
+    <title>我的信息</title>
+    <link rel="stylesheet" href="resource/layui/css/layui.css" media="all">
+    <style>
+        .layui-input {
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-col-md-offset3">
+    <br><br><br><br><br>
+    <h2 class="layui-col-md-offset3"><strong>我的信息</strong></h2>
+    <br><br><br>
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" id="username" class="layui-input" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" id="name" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-block">
+                <input type="text" id="age" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">电话</label>
+            <div class="layui-input-block">
+                <input type="text" id="tel" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">身份证</label>
+            <div class="layui-input-block">
+                <input type="text" id="idcard" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">住址</label>
+            <div class="layui-input-block">
+                <input type="text" id="address" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="0" title="男" id="pos1" checked>
+                <input type="radio" name="sex" value="1" title="女" id="pos2">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录密码</label>
+            <div class="layui-input-block">
+                <input type="text" id="password" class="layui-input">
+            </div>
+        </div>
+        <br><br>
+        <div class="layui-form-item layui-col-md-offset2">
+            <button class="layui-btn layui-btn-lg layui-btn-radius" style="width: 350px" id="changebtn1">修改</button>
+        </div>
+        <br>
+        <div class="layui-form-item layui-col-md-offset2">
+            <button class="layui-btn layui-btn-lg layui-btn-radius" style="width: 350px"
+                    onclick="window.history.back()">返回
+            </button>
+        </div>
+
+    </div>
+</div>
+</body>
+<script src="resource/layui/layui.js" charset="utf-8"></script>
+<script src="resource/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script>
+    //性别选择框必须的样式控件
+    layui.use('form', function () {
+        var form = layui.form;
+    });
+
+    window.onload = function () {
+        $.ajax({
+            type: "GET",
+            url: "/cselectperson.do",
+            dataType: "json",
+            success: function (data) {
+                $("#name").val(data.name);
+                $("#age").val(data.age);
+                $("#tel").val(data.tel);
+                $("#idcard").val(data.idcard);
+                $("#address").val(data.address);
+                $("#username").val(data.username);
+                $("#password").val(data.password);
+                if (data.sex == 0) {
+                    $("#pos1").attr("checked", "checked");
+                }
+                else {
+                    $("#pos2").attr("checked", "checked");
+                }
+
+            }
+        });
+    };
+
+    $(document).on("click", "#changebtn1", function () {
+        var name = $("#name").val();
+        var age = $("#age").val();
+        var tel = $("#tel").val();
+        var idcard = $("#idcard").val();
+        var address = $("#address").val();
+        var password = $("#password").val();
+        var sex = $('input:radio:checked').val();
+        if (confirm("确定修改？")) {
+            var array = [name, age, tel, idcard, address, sex, password];
+            $.ajax({
+                type: "POST",
+                url: "/cupdateperson.do",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                data: JSON.stringify(array),
+                success: function (data) {
+                    alert(data);
+                    window.location.href = window.location.href;
+                }
+            });
+        }
+
+    })
+</script>
+</html>
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.contract.system.mapper.ContractMapper">
+
+
+
+    <!--查询所有-->
+    <select id="getAll" resultType="com.contract.system.bean.Contract">
+        select * from contract limit #{page},5
+    </select>
+
+    <!--根据登录用户查询-->
+    <select id="getByAuthor" resultType="com.contract.system.bean.Contract">
+        select * from contract where author=#{author} limit #{page},5
+    </select>
+
+    <!--查询所有-->
+    <select id="getAll1" resultType="com.contract.system.bean.Contract">
+        select * from contract where author=#{author}
+    </select>
+
+    <!--根据登录用户查询合同数量-->
+    <select id="getNums" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(1) from contract where author=#{author}
+    </select>
+
+    <!--查询所有的数量-->
+    <select id="getAllNoPage" resultType="com.contract.system.bean.Contract">
+        select * from contract
+    </select>
+
+    <!--  新增  -->
+    <insert id="add" parameterType="com.contract.system.bean.Contract">
+        INSERT INTO contract (uuid,title,content,num,accounts,endDate,clientele,signDate,author,url,audit,payment,noPayment) VALUES(#{uuid},#{title},#{content},#{num},#{accounts},#{endDate},#{clientele},now(),#{author},#{url},'审核中',#{payment},#{noPayment})
+    </insert>
+
+    <!--根据id查询-->
+    <select id="getById" parameterType="java.lang.Integer" resultType="com.contract.system.bean.Contract">
+        select * from contract where id=#{id}
+    </select>
+
+    <!--组合查询-->
+    <select id="getContract" parameterType="com.contract.system.bean.query.ContractQueryForm" resultType="com.contract.system.bean.Contract">
+        select * from contract
+            where 1=1
+            <if test="contractQueryForm.signDate !=null">
+                and signDate &gt; #{signDate}
+            </if>
+            <if test="contractQueryForm.endDate!=null">
+                and endDate  &lt; #{endDate}
+            </if>
+            <if test="contractQueryForm.name!=null and contractQueryForm.name != ''">
+                and title like concat('%',#{contractQueryForm.name},'%')
+            </if>
+            <if test="contractQueryForm.status!=null and contractQueryForm.status != ''">
+                and audit=#{contractQueryForm.status}
+            </if>
+    </select>
+
+    <!--根据uuid查询-->
+    <select id="getByUUID" parameterType="java.lang.String" resultType="com.contract.system.bean.Contract">
+        select * from contract where uuid=#{uuid}
+    </select>
+
+    <!--更新审核-->
+    <update id="updateAudit" parameterType="com.contract.system.bean.Contract">
+        update contract set audit=#{audit}where id=#{id}
+    </update>
+
+
+    <!--更新全部合同资料-->
+    <update id="update" parameterType="com.contract.system.bean.Contract">
+        update contract set uuid=#{uuid},title=#{title},content=#{content},num=#{num},accounts=#{accounts},endDate=#{endDate},clientele=#{clientele},signDate=#{signDate}, audit=#{audit}, payment=#{payment},noPayment=#{noPayment} where id=#{id}
+    </update>
+    <!--根据id删除-->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from contract where id=#{id}
+    </delete>
+</mapper>
+
+
+
+
+
+
+

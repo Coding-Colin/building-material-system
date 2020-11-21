@@ -1,0 +1,104 @@
+<html lang="en">
+<head>
+    <title>登陆</title>
+    <link rel="stylesheet" href="resource/layui/css/layui.css">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        .layui-input {
+            width: 80%;
+        }
+        .layui-input {
+            border-width: 3px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-container">
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+    <div class="layui-row">
+        <div class="layui-col-md6">
+            <br><br><br><br>
+            <img class="layui-col-md-offset6" src="resource/others/img/login.ico">
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <h3>
+                        <strong>账号登陆</strong>
+                    </h3>
+                </div>
+                <div class="layui-card-body">
+                    <div class="layui-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">
+                                用户名
+                            </label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="name" placeholder="请输入账号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">
+                                密码
+                            </label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="password" placeholder="请输入密码" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button id="loginbtn" class="layui-btn layui-btn-radius" style="width:35%;">登陆</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="resource/layui/layui.js" charset="utf-8"></script>
+<script src="resource/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script>
+    layui.use('form', function () {
+        var form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+    //登陆
+    $(document).on("click", "#loginbtn", function () {
+        var name = $("#name").val();
+        var password = $("#password").val();
+        if (name == '') {
+            alert("用户名不能为空");
+        }
+        else if (password == '') {
+            alert("密码不能为空");
+        }
+        else {
+            var array = [name, password];
+            $.ajax({
+                type: "POST",
+                url: "/login.do",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                data: JSON.stringify(array),
+                success: function (data) {
+                    alert(data);
+                    if (data == '欢迎管理员登陆') {
+                        window.location.href = 'userHtml.do';
+                    }
+                    else if (data == '欢迎用户登陆') {
+                        window.location.href = 'cindexHtml.do';
+                    }
+                }
+            });
+        }
+    });
+</script>
+</html>

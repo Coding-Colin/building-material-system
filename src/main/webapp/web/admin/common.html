@@ -1,0 +1,62 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>共同部分</title>
+    <link rel="stylesheet" href="resource/layui/css/layui.css">
+</head>
+<body>
+<div class="layui-header" th:fragment="topbar">
+    <div class="layui-logo">管理后台</div>
+    <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+            <a href="javascript:;">
+                <img src="resource/others/img/admin.ico" class="layui-nav-img">
+                [[${session.loginUser}]]
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="layui-side layui-bg-black" th:fragment="sidebar">
+    <div class="layui-side-scroll" id="nav">
+        <ul class="layui-nav layui-nav-tree  " lay-filter="demo">
+            <li class="layui-nav-item layui-nav-itemed ">
+                <a th:href="@{/userHtml.do}">用户管理</a>
+            </li>
+            <li class="layui-nav-item ">
+                <a th:href="@{/personHtml.do}">客户管理</a>
+            </li>
+            <li class="layui-nav-item">
+                <a th:href="@{/contractHtml.do}">合同管理</a>
+            </li>
+            <li class="layui-nav-item">
+                <a th:href="@{/materialsHtml.do}">建材信息管理</a>
+            </li>
+            <li class="layui-nav-item">
+                <a th:href="@{/reportHtml.do}">签单报表</a>
+            </li>
+            <li class="layui-nav-item">
+                <a th:href="@{/quit.do}">退出</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="layui-footer" align="center" th:fragment="bottombar">
+    © 2021 - 合同管理管理端
+</div>
+</body>
+<script src="resource/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script src="resource/layui/layui.all.js"></script>
+<script type="text/javascript">
+    $('nav ul li a').click(function () {
+        $(this).addClass('layui-this').siblings().removeClass('layui-this');
+    });
+    layui.use('element', function () {
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+        element.init();
+        element.on('tab(demo)', function (data) {
+            console.log("aaa" + data);
+        });
+    });
+</script>
+</html>

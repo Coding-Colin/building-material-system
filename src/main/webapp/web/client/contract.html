@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的合同列表</title>
+    <link rel="stylesheet" href="resource/layui/css/layui.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="resource/page/css/page.css">
+    <style>
+        .layui-table {
+            width: 90%;
+        }
+        .pointer {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<center>
+    <div>
+        <br><br>
+        <h2><strong>我的合同列表</strong></h2>
+        <br>
+        <a class="layui-btn layui-btn-radius layui-btn-lg" style="width: 13%" data-toggle="modal" data-target="#myModal"
+           id="addcontractbtn">新增合同</a>
+        <br><br>
+        <input class="layui-input" placeholder="输入合同号" id="inputdiv" style="width:20%;display: inline">
+        <button class="layui-btn layui-btn-radius" style="width:5%;" id="inputbtn">搜索</button>
+        <table class="layui-table" lay-skin="line">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>合同编号</th>
+                <th>标题</th>
+                <th>客户</th>
+                <th>建材材料</th>
+                <th>总金额</th>
+                <th>到期日</th>
+                <th>签署日期</th>
+                <th>经手人</th>
+                <th>状态</th>
+                <th>合同下载</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="contentdiv">
+            </tbody>
+        </table>
+        <div style="text-align: center;margin:50px auto;">
+            <div id="pager" class="pager clearfix">
+            </div>
+        </div>
+    </div>
+    <a class="layui-btn layui-btn-radius layui-btn-lg" style="width: 13%" onclick="window.history.back()">返回</a>
+</center>
+
+<!--模拟框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加合同
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="title">标题</label>
+                        <input type="text" class="form-control" id="title">
+                    </div>
+                    <div class="form-group" id="cdiv" style="display: none;">
+                        <label for="content">简略内容</label>
+                        <input type="text" class="form-control" id="content" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientele">客户</label>
+                        <input type="text" class="form-control" id="clientele">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment">已付款金额</label>
+                        <input type="text" class="form-control" id="payment">
+                    </div>
+                    <div class="form-group" id="mbtndiv">
+                        <button type="button" class="btn btn-success" id="addmaterialsbtn">添加建材</button>
+                    </div>
+                    <div id="selectdiv">
+                        <div class="form-group materdiv" id="div0">
+                            种类&nbsp;&nbsp;<select class="form-control materialstype" style="width: 40%;display: inline"
+                                                  id="type0"></select>&nbsp;&nbsp;
+                            数量&nbsp;&nbsp;<input type="text" class="form-control materialsnum" id="num0"
+                                                 style="width: 30%;display: inline" placeholder="输入建材的数量">
+                        </div>
+                    </div>
+
+                    <div id="addmadiv">
+
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">到期日</label>
+                        <input type="date" class="form-control" id="endDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">合同明细</label>
+                        <input type="file" class="form-control" id="contractfile">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="ubtn">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="resource/layui/layui.js"></script>
+<script src="resource/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="resource/page/js/jquery.z-pager.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    //样式必须插件
+    layui.use('form', function () {
+        var form = layui.form;
+    });
+
+    var size = 0;
+    var materdata;
+    window.onload = function () {
+        $.ajax({
+            type: "GET",
+            url: "/contractOnload.do",
+            dataType: "json",
+            success: function (data) {
+                var html = show(data.logs);
+                size = data.size;
+                ss(size);
+                $("#contentdiv").html(html);
+                var materdata = data.materials;
+                getAllSelect(materdata);
+
+            }
+        });
+    };
+
+    function ss(e) {
+        $("#pager").zPager({
+            totalData: e,
+            htmlBox: $('#wraper'),
+            btnShow: true,
+            ajaxSetData: false
+        });
+
+    }
+
+    function currentPage(currentPage) {
+        var array = [currentPage - 1];
+        $.ajax({
+            type: "POST",
+            url: "/contract.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(array),
+            success: function (data) {
+                var html = show(data);
+
+                $("#contentdiv").html(html);
+            }
+        });
+    }
+
+    $("#inputbtn").click(function () {
+        var value = $("#inputdiv").val();
+        var array = [value];
+        $.ajax({
+            type: "POST",
+            url: "/selectcontract1.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(array),
+            success: function (data) {
+                var html = show(data);
+                ss(data.length)
+                $("#contentdiv").html(html);
+            }
+        });
+    });
+
+
+    function getAllSelect(materdata) {
+        $(".materialstype").empty(); //清空select
+        for (var i = 0; i < materdata.length; i++) {
+            var option = $("<option />");
+            option.html(materdata[i].name);
+            option.val(materdata[i].name);
+            $(".materialstype").append(option);
+        }
+    }
+
+    $("#addmaterialsbtn").click(function () {
+        var id = getMaterDivNum();
+        var html = '<div class="form-group materdiv" id="div' + id + '">';
+        html += '种类&nbsp;&nbsp;<select class="form-control materialstype" style="width: 40%;display: inline" id="type' + id + '"></select>&nbsp;&nbsp;';
+        html += '数量&nbsp;&nbsp;&nbsp;<input type="text" class="form-control materialsnum"  style="width: 30%;display: inline" placeholder="输入建材的数量" id="num' + id + '">&nbsp;&nbsp;&nbsp;';
+        html += '<a class="materialsclose pointer" aria-hidden="true" style="display: inline" onclick="removematerdiv(' + id + ')">&times;</a>';
+        html += '</div>';
+        $("#addmadiv").append(html);
+        getAllSelect(materdata);
+    });
+
+    function getMaterDivNum() {
+        var materdiv = $('.materdiv').length;//conf为元素class值
+        return materdiv;
+    }
+
+    function removematerdiv(e) {
+        if (getMaterDivNum() == 1) {
+            alert("建材不能为空！");
+        }
+        else {
+            var divid = "#div" + e;
+            $(divid).empty();
+        }
+
+    }
+
+    function getmariatypeList() {
+        var num = getMaterDivNum();
+        var array = [];
+        for (var i = 0; i < num; i++) {
+            var id = "#type" + i;
+            var value = undefined;
+            value = $(id).val();
+            if (typeof (value) != "undefined") {
+                array.push(value);
+            }
+        }
+        return array;
+    }
+
+    function getmarianumList() {
+        var num = getMaterDivNum();
+        var array = [];
+        for (var i = 0; i < num; i++) {
+            var id = "#num" + i;
+            var value = $(id).val();
+            if (typeof (value) != "undefined") {
+                array.push(value);
+            }
+        }
+        return array;
+    }
+
+    function show(data) {
+        $("#contentdiv").html("");
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>'
+            html += '<td>' + data[i].id + '</td>';
+            html += '<td>' + data[i].uuid + '</td>';
+            html += '<td>' + data[i].title + '</td>';
+            html += '<td>' + data[i].clientele + '</td>';
+            html += '<td>'+data[i].content+'</td>';
+            html += '<td>' + data[i].accounts + '</td>';
+            html += '<td>' + formatDate(data[i].endDate) + '</td>';
+            html += '<td>' + formatDate(data[i].signDate) + '</td>';
+            html += '<td>' + data[i].author + '</td>';
+            html += '<td>'+data[i].status+'</td>';
+            html += '<td>';
+            html += '<a class="layui-btn  layui-btn-radius downcontract" onclick="downloadcontract(' + data[i].id + ')">下载合同</a>';
+            html += '</td>';
+            html += '<td>';
+            html += '<a class="layui-btn  layui-btn-radius selectcontract" onclick="bianji(' + data[i].id + ')" data-toggle="modal" data-target="#myModal">编辑</a>';
+            html += '<a class="layui-btn layui-btn-primary layui-btn-radius deletecontract" onclick="shanchu(' + data[i].id + ')">删除</a>';
+            html += '</td>';
+            html += '</tr>';
+        }
+        return html;
+    }
+
+
+
+    function downloadcontract(e) {
+        var array = [e];
+        $.ajax({
+            type: "POST",
+            url: "/cdownloadcontract.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(array),
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+
+    function bianji(e) {
+        var array = [e];
+        localStorage.setItem("id", e);
+        $.ajax({
+            type: "POST",
+            url: "/selectcontract.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(array),
+            success: function (data) {
+                $("#myModalLabel").html("修改合同");
+                $("#ubtn").text("更新");
+                $("#title").val(data.contracts.title);
+                $("#cdiv").show();
+                $("#content").val(data.contracts.content);
+                $("#clientele").val(data.contracts.clientele);
+                $("#endDate").val(formatDate(data.contracts.endDate));
+                $("#selectdiv").html("");
+                for (var i = 0; i < data.nums.length; i++) {
+                    var html = '';
+                    html += '<div class="form-group materdiv" id="div' + i + '">';
+                    html += '种类&nbsp;&nbsp;<select class="form-control materialstype" style="width: 40%;display: inline" id="type' + i + '"></select>&nbsp;&nbsp;';
+                    html += '数量&nbsp;&nbsp;&nbsp;<input type="text" class="form-control materialsnum"  style="width: 30%;display: inline" placeholder="输入建材的数量" id="num' + i + '">&nbsp;&nbsp;&nbsp;';
+                    html += '<a class="materialsclose pointer" aria-hidden="true" style="display: inline" onclick="removematerdiv(' + i + ')">&times;</a>';
+                    html += '</div>';
+                    $("#selectdiv").append(html);
+                    var typeid = "#type" + i;
+                    getAllSelect(materdata);
+                    $(typeid).val(data.materials[i]);
+                    var numid = "#num" + i;
+                    $(numid).val(data.nums[i])
+                }
+            }
+        });
+    }
+
+    function shanchu(e) {
+        var array = [e];
+        $.ajax({
+            type: "POST",
+            url: "/deletecontract.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(array),
+            success: function (data) {
+                alert(data);
+                if (data == "删除成功") {
+                    window.location.href = window.location.href;
+                }
+            }
+        });
+    }
+
+
+    //修改模态框的文字
+
+    $("#addcontractbtn").click(function () {
+        $("#selectdiv").empty();
+        $.ajax({
+            type: "GET",
+            url: "/contractOnload.do",
+            dataType: "json",
+            success: function (data) {
+                materdata = data.materials;
+                var html = '<div class="form-group materdiv" id="div0"> 种类&nbsp;&nbsp;<select class="form-control materialstype" style="width: 40%;display: inline" id="type0"></select>&nbsp;&nbsp;';
+                html += '数量&nbsp;&nbsp;<input type="text" class="form-control materialsnum"  id="num0" style="width: 30%;display: inline" placeholder="输入建材的数量">';
+                html += '</div>';
+                $("#selectdiv").html(html);
+                getAllSelect(materdata);
+            }
+        });
+        $("#myModalLabel").html("添加合同");
+        $("#ubtn").text("添加");
+        $("#title").val('');
+        $("#content").val('');
+        $("#clientele").val('');
+        $("#accounts").val('');
+
+    });
+
+    //公用按钮
+    $("#ubtn").click(function () {
+        var val = $("#ubtn").text();
+        if (val == '添加') {
+            add();
+        }
+        else if (val == '更新') {
+            update();
+        }
+    });
+
+    /**
+     * 新增合同
+     */
+    function add() {
+        var title = $("#title").val();
+        var clientele = $("#clientele").val();
+        var num = getmarianumList();
+        var materials = getmariatypeList();
+        var endDate = $("#endDate").val();
+        var payment = $("#payment").val();
+        var formData = new FormData();
+        formData.append("contractfile", $("#contractfile")[0].files[0]);
+        formData.append("title", title);
+        formData.append("clientele", clientele);
+        formData.append("num", num);
+        formData.append("materials", materials);
+        formData.append("endDate", endDate);
+        formData.append("payment", payment);
+        $.ajax({
+            type: "POST",
+            url: "/addcontract.do",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                alert(data);
+                window.location.href = window.location.href;
+            }
+        });
+    }
+
+
+    //更新方法
+    function update() {
+        var id = localStorage.getItem("id");
+        var title = $("#title").val();
+        var clientele = $("#clientele").val();
+        var num = getmarianumList();
+        var materials = getmariatypeList();
+        var endDate = $("#endDate").val();
+        var audit = "已编辑"
+        var payment = $("#payment").val();
+        if (confirm("确认修改?")) {
+            var formData = new FormData();
+            formData.append("contractfile", $("#contractfile")[0].files[0]);
+            formData.append("id", id);
+            formData.append("title", title);
+            formData.append("clientele", clientele);
+            formData.append("num", num);
+            formData.append("materials", materials);
+            formData.append("endDate", endDate);
+            formData.append("audit", audit);
+            formData.append("payment", payment);
+            $.ajax({
+                type: "POST",
+                url: "/updatecontract.do",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    alert(data);
+                    window.location.href = window.location.href;
+                }
+            });
+        }
+    }
+
+    function formatDate(now) {
+        var date = new Date(now);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var day = ("0" + date.getDate()).slice(-2);
+        var today = date.getFullYear() + "-" + (month) + "-" + (day);
+        return today;
+    }
+
+</script>
+</html>
