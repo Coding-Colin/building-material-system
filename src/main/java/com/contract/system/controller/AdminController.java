@@ -41,8 +41,6 @@ public class AdminController {
 
     public static String endDate = "";
     public static String signDate = "";
-    public static final  String PATH = "D:\\graduate\\CONTRACT\\src\\main\\webapp\\";
-    public static final  String DOWNLOADPATH = "D:\\graduate\\";
 
 
     /**
@@ -75,14 +73,13 @@ public class AdminController {
      */
     @ResponseBody
     @RequestMapping("/selectuserByname.do")
-    public String selectuserByname(@RequestParam String arr[]){
+    public String selectuserByname(@RequestBody String array[]){
         String param = "";
-        if (arr.length != 0){
-            param = arr[0];
+        if (array.length != 0){
+            param = array[0];
         }
         List<User> list =  userMapper.getByName(param) ;
-        PageInfo<User> pageInfo = new PageInfo<>(list);
-        return JsonUtil.toJson(pageInfo);
+        return JsonUtil.toJson(list);
     }
 
 
@@ -217,6 +214,22 @@ public class AdminController {
     }
 
     /**
+     * 查询用户
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/selectpersonByname.do")
+    public String selectpersonByname(@RequestBody String array[]){
+        String param = "";
+        if (array.length != 0){
+            param = array[0];
+        }
+        List<Person> list =  personMapper.getByName(param) ;
+        return JsonUtil.toJson(list);
+    }
+
+
+    /**
      * 查询客户分页
      * @return
      */
@@ -326,27 +339,11 @@ public class AdminController {
     @RequestMapping("/updatestatus.do")
     public String updatestatus(@RequestBody String array[]){
         Contract contract = contractMapper.getById(Integer.parseInt(array[0]));
-        contract.setAudit(array[1]);
+        contract.setStatus(array[1]);
         contractMapper.update(contract);
         return JsonUtil.toJson("更新成功");
     }
 
-
-    /**
-     * 下载文件
-     * @return 成功下载文件保存到指定位置
-     * @throws IOException
-     */
-    @ResponseBody
-    @RequestMapping("/downloadcontract.do")
-    public String downloadFile(@RequestBody String array[])throws Exception{
-        Contract contract = contractMapper.getById(Integer.parseInt(array[0]));
-        //文件所在目录路径
-        String filename = contract.url.split("\\\\")[2];
-        String filePath = PATH+contract.url;
-        FileUtil.copy(filename,filePath,DOWNLOADPATH);
-        return JsonUtil.toJson("File save path "+DOWNLOADPATH);
-    }
 
 
     /**

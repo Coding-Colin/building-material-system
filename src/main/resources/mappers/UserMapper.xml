@@ -23,9 +23,7 @@
     </select>
     <!--根据name查询-->
     <select id="getByName" parameterType="java.lang.String" resultType="com.contract.system.bean.User">
-        select * from user where username = #{username}
-
-
+        select * from user where username like concat('%',concat(#{username},'%'))
     </select>
 
     <!--根据name查询搜索-->

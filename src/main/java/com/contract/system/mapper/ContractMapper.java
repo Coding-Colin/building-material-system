@@ -26,7 +26,7 @@ public interface ContractMapper {
      * 根据登录用户查询（员工端）
      * @return
      */
-    public List<Contract> getByAuthor(@Param("author") String author, @Param("page") Integer page);
+    public List<Contract> getByAuthor(@Param("author") String author, @Param("queryword")String queryword, @Param("page") Integer page);
 
     /**
      * 根据登录用户查询
@@ -65,7 +65,7 @@ public interface ContractMapper {
      * @param uuid
      * @return
      */
-    public Contract getByUUID(String uuid);
+    public List<Contract> getByUUID(String uuid);
 
 
     /**

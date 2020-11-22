@@ -15,7 +15,8 @@
         <br>&nbsp;&nbsp;&nbsp;
         <button type="button" class="layui-btn" data-toggle="modal" data-target="#myModal" id="adduserbtn">添加用户</button>
         <div class="layui-col-lg-offset3">
-            <input class="layui-input" style="width: 30%;display: inline;" id="inputvalue" placeholder="请输入姓名"><button class="layui-btn layui-btn-radius" style="width: 10%;display: inline;" id="selectbtn">查询</button>
+            <input class="layui-input" style="width: 30%;display: inline;" id="inputvalue" placeholder="请输入姓名">
+            <button class="layui-btn layui-btn-radius" style="width: 10%;display: inline;" id="selectbtn">查询</button>
         </div>
         <table class="layui-table">
             <thead>
@@ -353,17 +354,15 @@
 
 
     $("#selectbtn").click(function () {
-        var params = $("#inputvalue").val();
+        var array = [$("#inputvalue").val()];
         $.ajax({
             type: "POST",
             url: "/selectuserByname.do",
             dataType: "json",
-            contentType : "application/json;charset=UTF-8",
-            data:JSON.stringify(params),
+            contentType: "application/json;charset=UTF-8",
+            data:JSON.stringify(array),
             success: function (data) {
-                $("#pager").hide();
-                var html = show(data.list);
-                ss(data.total)
+                var html = show(data);
                 $("#contentdiv").html(html);
             }
         });

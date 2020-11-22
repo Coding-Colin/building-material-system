@@ -24,7 +24,7 @@ public interface PersonMapper {
      * 根据name查询
      * @return
      */
-    public List<Person> getByName(@Param("dto")PersonDto dto);
+    public List<Person> getByName(String name);
 
 
     /**

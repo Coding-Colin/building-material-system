@@ -18,36 +18,25 @@ public class Contract {
     public Date signDate;//签署日期
     public String author;//经手人
     public String url;//合同存储地址
-    public String status;
+    public String materials;//材料
+    public String status;//狀態
 
-    public Integer payment;
-
-    public Integer getPayment() {
-        return payment;
+    public String getStatus() {
+        return status;
     }
 
-    public void setPayment(Integer payment) {
-        this.payment = payment;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public Integer getNoPayment() {
-        return noPayment;
+    public String getMaterials() {
+        return materials;
     }
 
-    public void setNoPayment(Integer noPayment) {
-        this.noPayment = noPayment;
+    public void setMaterials(String materials) {
+        this.materials = materials;
     }
 
-    public Integer noPayment;
-
-    public String audit;
-    public String getAudit() {
-        return audit;
-    }
-
-    public void setAudit(String audit) {
-        this.audit = audit;
-    }
     public Integer getId() {
         return id;
     }
@@ -136,11 +125,4 @@ public class Contract {
         this.num = num;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

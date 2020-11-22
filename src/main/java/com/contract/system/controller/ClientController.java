@@ -1,33 +1,22 @@
 package com.contract.system.controller;
 import com.contract.system.bean.Contract;
 import com.contract.system.bean.Materials;
-import com.contract.system.bean.Person;
 import com.contract.system.bean.User;
 import com.contract.system.mapper.ContractMapper;
 import com.contract.system.mapper.MaterialsMapper;
 import com.contract.system.mapper.PersonMapper;
 import com.contract.system.mapper.UserMapper;
 import com.contract.system.util.*;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.sun.deploy.net.HttpResponse;
-import com.sun.deploy.net.URLEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.swing.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -47,12 +36,10 @@ public class ClientController {
     @Autowired
     public UserMapper userMapper;
 
+    public static String REAL_PATH = "src/main/webapp/resource/files/";
     public static String LOGINUSER = "";
     public static String AUTHER_NAME = "";
-    public static final  String PATH = "D:\\graduate\\CONTRACT\\src\\main\\webapp\\";
-    public static final  String LOCALPATH = "resource\\word\\";
     public static final  String DOWNLOADPATH = "D:\\graduate\\";
-
     /**
      * 首页
      * @return
@@ -130,7 +117,7 @@ public class ClientController {
     public String contractOnload(){
 
         Map<String,Object> map = new HashMap<String, Object>();
-        List<Contract> list = contractMapper.getByAuthor(AUTHER_NAME,0);//查询第一页合同
+        List<Contract> list = contractMapper.getByAuthor(AUTHER_NAME,"",0);//查询第一页合同
         map.put("logs",list);
         int num = contractMapper.getNums(AUTHER_NAME);
         map.put("size",num);//查询数量用作分页的页数
@@ -147,7 +134,7 @@ public class ClientController {
     @ResponseBody
     @RequestMapping("/contract.do")
     public String contract(@RequestBody String array[]){
-        List<Contract> list = contractMapper.getByAuthor(AUTHER_NAME,Integer.parseInt(array[0])*5);
+        List<Contract> list = contractMapper.getByAuthor(AUTHER_NAME,array[1], Integer.parseInt(array[0])*5);
         return JsonUtil.toJson(list);
     }
 
@@ -168,8 +155,6 @@ public class ClientController {
         String materials = request.getParameter("materials");
         String num = request.getParameter("num");
         String endDate = request.getParameter("endDate");
-        int payment = Integer.valueOf(request.getParameter("payment"));
-
         if (files.isEmpty()) {
             return "false";
         }for (MultipartFile file : files) {
@@ -177,7 +162,8 @@ public class ClientController {
             if (file.isEmpty()) {
                 return "false";
             } else {
-                File dest = new File(PATH + LOCALPATH + fileName);
+                String path = this.getClass().getResource("").getPath().split("target/")[0] + REAL_PATH;
+                File dest = new File(path + fileName);
                 if (!dest.getParentFile().exists()) { // 判断文件父目录是否存在
                     dest.getParentFile().mkdir();
                 }
@@ -206,11 +192,9 @@ public class ClientController {
                     contract.setAccounts(accounts);
                     contract.setEndDate(StringToDateUtil.StringToDate(endDate));
                     contract.setUuid(UUIDUtil.makeUUID());
-                    contract.setUrl(LOCALPATH+fileName);
+                    contract.setUrl(REAL_PATH + fileName);
                     contract.setAuthor(AUTHER_NAME);
-                    contract.setPayment(payment);
-                    int noPayment = accounts-payment;
-                    contract.setNoPayment(noPayment);
+                    contract.setMaterials(materials);
                     file.transferTo(dest);
                     contractMapper.add(contract);
                     return JsonUtil.toJson("success");
@@ -242,6 +226,7 @@ public class ClientController {
             nlist.add(m);
         }
         Map map = new HashMap();
+        map.put("materialsData",materialsMapper.getAll());
         map.put("contracts",contract);
         map.put("materials",mlist);
         map.put("nums",nlist);
@@ -251,17 +236,15 @@ public class ClientController {
     /**
      * 查询合同
      */
-    @ResponseBody
-    @RequestMapping("/selectcontract1.do")
-    public String getContract1(@RequestBody String array[]){
-        if (array[0].equals("")){
-            return JsonUtil.toJson(contractMapper.getByAuthor(AUTHER_NAME,0));
-        }
-        Contract contract = contractMapper.getByUUID(array[0]);
-        List<Contract> list = new ArrayList<Contract>();//这里为了统一前端的for循环不用重写展示方法，封装成list形式
-        list.add(contract);
-        return JsonUtil.toJson(list);
-    }
+//    @ResponseBody
+//    @RequestMapping("/selectContractByUUID.do")
+//    public String selectContractByUUID(@RequestBody String array[]){
+//        if ("".equals(array[0])){
+//            return JsonUtil.toJson(contractMapper.getByAuthor(AUTHER_NAME,0));
+//        }
+//        List<Contract> list = contractMapper.getByUUID(array[0]);
+//        return JsonUtil.toJson(list);
+//    }
     /**
      * 更新合同状态
      * @return
@@ -271,7 +254,7 @@ public class ClientController {
     @RequestMapping(value = "/updatestatus1.do",method = RequestMethod.POST)
     public String updatestatus1(@RequestBody String array[]){
         Contract contract = contractMapper.getById(Integer.parseInt(array[0]));
-        contract.setAudit(array[1]);
+        contract.setStatus(array[1]);
         contractMapper.updateAudit(contract);
         return JsonUtil.toJson("更新成功");
     }
@@ -294,12 +277,9 @@ public class ClientController {
         String endDate = request.getParameter("endDate");
         String materials = request.getParameter("materials");
         String num = request.getParameter("num");
-        String audit = request.getParameter("audit");
-        int payment = Integer.valueOf(request.getParameter("payment"));
         Contract contract = contractMapper.getById(Integer.parseInt(id));
         contract.setTitle(title);
         contract.setClientele(clientele);
-
         if (!endDate.equals("")){
             contract.setEndDate(StringToDateUtil.StringToDate(endDate));
         }
@@ -313,7 +293,7 @@ public class ClientController {
             Materials materials1 = materialsMapper.getByName(mtype[i]);
             //更新建材
             String martype = contract.getContent();
-            int remain = materials1.num;
+            int remain;
             if (martype.contains(materials1.name)){
                 remain = materials1.num+Integer.parseInt(contract.num.split(",")[i])-Integer.parseInt(mnum[i]);
             }
@@ -334,38 +314,29 @@ public class ClientController {
         contract.setContent(content.toString().substring(0,content.toString().length()-1));
         contract.setNum(contentnum.toString().substring(0,contentnum.toString().length()-1));
         contract.setAccounts(accounts);
-        contract.setPayment(payment);
-        int noPayment = accounts-payment;
-        contract.setNoPayment(noPayment);
         if (files.size()>0){
+            String path = this.getClass().getResource("").getPath().split("target/")[0] + REAL_PATH;
             String fileName = files.get(0).getOriginalFilename();
-            File dest = new File(PATH + LOCALPATH + fileName);
-            FileUtil.delete(PATH+contract.url);//如果合同不为空 则删除旧版合同
-            contract.setUrl(LOCALPATH+fileName);
+            File dest = new File(path + REAL_PATH + fileName);
+            FileUtil.delete(path + REAL_PATH +contract.url);//如果合同不为空 则删除旧版合同
+            contract.setUrl(REAL_PATH +fileName);
             files.get(0).transferTo(dest);
         }
-        contract.setAudit(audit);
         contractMapper.update(contract);
         return JsonUtil.toJson("success");
     }
 
     /**
      * 下载文件
-     * @param session
      * @param request
      * @param response
-     * @return 成功下载文件，失败返回0
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping("/cdownloadcontract.do")
-    public String downloadFile(@RequestBody String array[], HttpSession session ,HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Contract contract = contractMapper.getById(Integer.parseInt(array[0]));
-        //文件所在目录路径
-        String filename = contract.url.split("\\\\")[2];
-        String filePath = PATH+contract.url;
-        FileUtil.copy(filename,filePath,DOWNLOADPATH);
-        return JsonUtil.toJson("success");
+    @RequestMapping("/cdownloadcontract/{id}.do")
+    public void downloadFile(@PathVariable int id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Contract contract = contractMapper.getById(id);
+        String path = this.getClass().getResource("").getPath().split("target/")[0];
+        FileUtil.downfile(response,path+contract.getUrl());
     }
 
 

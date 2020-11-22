@@ -81,8 +81,8 @@
                         <input type="text" class="form-control" id="clientele">
                     </div>
                     <div class="form-group">
-                        <label for="payment">已付款金额</label>
-                        <input type="text" class="form-control" id="payment">
+                        <label for="accounts">合同金额</label>
+                        <input type="text" class="form-control" id="accounts">
                     </div>
                     <div class="form-group" id="mbtndiv">
                         <button type="button" class="btn btn-success" id="addmaterialsbtn">添加建材</button>
@@ -157,7 +157,7 @@
     }
 
     function currentPage(currentPage) {
-        var array = [currentPage - 1];
+        var array = [currentPage - 1,$("#inputdiv").val()];
         $.ajax({
             type: "POST",
             url: "/contract.do",
@@ -166,24 +166,22 @@
             data: JSON.stringify(array),
             success: function (data) {
                 var html = show(data);
-
                 $("#contentdiv").html(html);
             }
         });
     }
 
     $("#inputbtn").click(function () {
-        var value = $("#inputdiv").val();
-        var array = [value];
+        var array = [0,$("#inputdiv").val()];
         $.ajax({
             type: "POST",
-            url: "/selectcontract1.do",
+            url: "/contract.do",
             dataType: "json",
             contentType: "application/json;charset=UTF-8",
             data: JSON.stringify(array),
             success: function (data) {
+                ss(data.length);
                 var html = show(data);
-                ss(data.length)
                 $("#contentdiv").html(html);
             }
         });
@@ -273,8 +271,14 @@
             html += '<a class="layui-btn  layui-btn-radius downcontract" onclick="downloadcontract(' + data[i].id + ')">下载合同</a>';
             html += '</td>';
             html += '<td>';
-            html += '<a class="layui-btn  layui-btn-radius selectcontract" onclick="bianji(' + data[i].id + ')" data-toggle="modal" data-target="#myModal">编辑</a>';
-            html += '<a class="layui-btn layui-btn-primary layui-btn-radius deletecontract" onclick="shanchu(' + data[i].id + ')">删除</a>';
+            if (data[i].status == '合同已生效') {
+                html += '<a class="layui-btn  layui-btn-radius selectcontract" onclick="bianji(' + data[i].id + ')" data-toggle="modal" data-target="#myModal">编辑</a>';
+                html += '<a class="layui-btn layui-btn-primary layui-btn-radius deletecontract" onclick="shanchu(' + data[i].id + ')">删除</a>';
+            }
+            else {
+                html += '<a class="layui-btn  layui-btn-radius layui-disabled" onclick="bianji(' + data[i].id + ')">编辑</a>';
+                html += '<a class="layui-btn layui-btn-primary layui-btn-radius  layui-disabled" onclick="shanchu(' + data[i].id + ')">删除</a>';
+            }
             html += '</td>';
             html += '</tr>';
         }
@@ -284,17 +288,7 @@
 
 
     function downloadcontract(e) {
-        var array = [e];
-        $.ajax({
-            type: "POST",
-            url: "/cdownloadcontract.do",
-            dataType: "json",
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify(array),
-            success: function (data) {
-                alert(data);
-            }
-        });
+        window.location.href = "/cdownloadcontract/"+ e + '.do';
     }
 
     function bianji(e) {
@@ -313,6 +307,7 @@
                 $("#cdiv").show();
                 $("#content").val(data.contracts.content);
                 $("#clientele").val(data.contracts.clientele);
+                $("#accounts").val(data.contracts.accounts);
                 $("#endDate").val(formatDate(data.contracts.endDate));
                 $("#selectdiv").html("");
                 for (var i = 0; i < data.nums.length; i++) {
@@ -324,7 +319,7 @@
                     html += '</div>';
                     $("#selectdiv").append(html);
                     var typeid = "#type" + i;
-                    getAllSelect(materdata);
+                    getAllSelect(data.materialsData);
                     $(typeid).val(data.materials[i]);
                     var numid = "#num" + i;
                     $(numid).val(data.nums[i])

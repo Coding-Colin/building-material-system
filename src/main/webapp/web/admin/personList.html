@@ -284,9 +284,7 @@
     }
 
     $("#selectbtn").click(function () {
-        var param = {
-            "name": $("#inputvalue").val()
-        }
+        var param = [$("#inputvalue").val()];
         $.ajax({
             type: "POST",
             url: "/selectpersonByname.do",
@@ -294,8 +292,8 @@
             contentType: "application/json;charset=UTF-8",
             data: JSON.stringify(param),
             success: function (data) {
-                var html = show(data.list);
-                ss(data.total);
+                ss(data.length);
+                var html = show(data);
                 $("#contentdiv").html(html);
             }
         });

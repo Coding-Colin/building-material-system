@@ -1,7 +1,7 @@
 package com.contract.system.util;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Files;
 
 public class FileUtil {
@@ -21,21 +21,23 @@ public class FileUtil {
         }
     }
 
+
     /**
      * 下载文件
-     *
-     * @param
      */
-    public static void copy(String filename, String oldpath, String newpath) throws IOException {
-        File oldpaths = new File(oldpath);
-        File newpaths = new File(newpath + "/" + filename);
-        if (!newpaths.exists()) {
-            Files.copy(oldpaths.toPath(), newpaths.toPath());
-        } else {
-            newpaths.delete();
-            Files.copy(oldpaths.toPath(), newpaths.toPath());
+    public static void downfile(HttpServletResponse response ,String path) throws IOException {
+        String suffix = path.split("\\.")[path.split("\\.").length - 1];
+        response.setHeader("content-disposition","attachment;fileName="+"contract."+suffix);
+        InputStream in = new FileInputStream(path); //获取下载文件的输入流
+        int count =0;
+        byte[] by = new byte[1024];
+        OutputStream out=  response.getOutputStream();
+        while((count=in.read(by))!=-1){
+            out.write(by, 0, count);//将缓冲区的数据输出到浏览器
         }
-
+        in.close();
+        out.flush();
+        out.close();
     }
 }
 

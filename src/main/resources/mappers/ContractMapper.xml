@@ -12,7 +12,9 @@
 
     <!--根据登录用户查询-->
     <select id="getByAuthor" resultType="com.contract.system.bean.Contract">
-        select * from contract where author=#{author} limit #{page},5
+        select * from contract where author=#{author}
+        and uuid like concat('%',concat(#{queryword},'%'))
+         limit #{page},5
     </select>
 
     <!--查询所有-->
@@ -32,7 +34,7 @@
 
     <!--  新增  -->
     <insert id="add" parameterType="com.contract.system.bean.Contract">
-        INSERT INTO contract (uuid,title,content,num,accounts,endDate,clientele,signDate,author,url,audit,payment,noPayment) VALUES(#{uuid},#{title},#{content},#{num},#{accounts},#{endDate},#{clientele},now(),#{author},#{url},'审核中',#{payment},#{noPayment})
+        INSERT INTO contract (uuid,title,content,num,accounts,endDate,clientele,signDate,author,url,status,materials) VALUES(#{uuid},#{title},#{content},#{num},#{accounts},#{endDate},#{clientele},now(),#{author},#{url},'合同已生效',#{materials})
     </insert>
 
     <!--根据id查询-->
@@ -60,18 +62,13 @@
 
     <!--根据uuid查询-->
     <select id="getByUUID" parameterType="java.lang.String" resultType="com.contract.system.bean.Contract">
-        select * from contract where uuid=#{uuid}
+        select * from contract where uuid like concat('%',concat(#{uuid},'%'))
     </select>
-
-    <!--更新审核-->
-    <update id="updateAudit" parameterType="com.contract.system.bean.Contract">
-        update contract set audit=#{audit}where id=#{id}
-    </update>
 
 
     <!--更新全部合同资料-->
     <update id="update" parameterType="com.contract.system.bean.Contract">
-        update contract set uuid=#{uuid},title=#{title},content=#{content},num=#{num},accounts=#{accounts},endDate=#{endDate},clientele=#{clientele},signDate=#{signDate}, audit=#{audit}, payment=#{payment},noPayment=#{noPayment} where id=#{id}
+        update contract set uuid=#{uuid},title=#{title},content=#{content},num=#{num},accounts=#{accounts},endDate=#{endDate},clientele=#{clientele},status=#{status},materials=#{materials} where id=#{id}
     </update>
     <!--根据id删除-->
     <delete id="deleteById" parameterType="java.lang.Integer">

@@ -27,11 +27,11 @@
 
                 <div class="layui-input-inline layui-show-xs-block">
                     <select name="contrller" id="stauts">
-                        <option value="">请选择</option>
-                        <option value="审核中">审核中</option>
-                        <option value="已编辑">已编辑</option>
-                        <option value="未通过">未通过</option>
-                        <option value="通过">通过</option>
+                        <option value="合同已生效" selected>请选择</option>
+                        <option value="已付定金">已付定金</option>
+                        <option value="已付尾款">已付尾款</option>
+                        <option value="已返还材料">已返还材料</option>
+                        <option value="审批失败">审批失败</option>
                     </select>
                 </div>
                 <div class="layui-input-inline layui-show-xs-block">
@@ -77,9 +77,11 @@
                     <form>
                         <div class="form-group">
                             <select class="form-control" id="audit">
-                                <option value="未通过">未通过</option>
-                                <option value="通过">通过</option>
-                                <option value="允许编辑">允许编辑</option>
+                                <option value="合同已生效" selected>请选择</option>
+                                <option value="已付定金">已付定金</option>
+                                <option value="已付尾款">已付尾款</option>
+                                <option value="已返还材料">已返还材料</option>
+                                <option value="审批失败">审批失败</option>
                             </select>
                         </div>
                     </form>
@@ -103,29 +105,8 @@
         element.init();
     });
 
-    $("#select_btn").click(function () {
-        var params = {
-            "name": $("#name").val(),
-            "startDate": $("#start").val(),
-            "endDate": $("#end").val(),
-            "stauts": $("#stauts").val(),
-        }
-        $.ajax({
-            type: "POST",
-            url: "/getContract.do",
-            dataType: "json",
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify(params),
-            success: function (data) {
-                var html = show(data.list);
-                size = data.size;
-                ss(data.total);
-                $("#contentdiv").html(html);
-            }
-        });
-    })
 
-    //
+
     layui.use(['laydate', 'form'],
         function () {
             var laydate = layui.laydate;
@@ -213,17 +194,7 @@
     };
 
     function downloadcontract(e) {
-        var array = [e];
-        $.ajax({
-            type: "POST",
-            url: "/downloadcontract.do",
-            dataType: "json",
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify(array),
-            success: function (data) {
-                alert(data);
-            }
-        });
+        window.location.href = "/cdownloadcontract/"+ e + '.do';
     }
 
     function bianji(e) {
