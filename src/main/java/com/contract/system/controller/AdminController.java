@@ -313,10 +313,15 @@ public class AdminController {
      */
     @ResponseBody
     @RequestMapping("/getContract.do")
-    public String getContract(@RequestParam ContractQueryForm form){
-        List<Contract> contracts   = contractMapper.getContract(form);
-        PageInfo<Contract> pageInfo = new PageInfo<>(contracts);
-        return JsonUtil.toJson(pageInfo);
+    public String getContract(@RequestBody  String array[]){
+        ContractQueryForm form = new ContractQueryForm();
+        form.setName(array[0]);
+        form.setStartDate("".equals(array[1]) ? null : DateUtil.parse(array[1]));
+        form.setEndDate("".equals(array[2]) ? null : DateUtil.parse(array[1]));
+        form.setStatus(array[3]);
+        form.setPage("".equals(array[4]) ? 0 : Integer.parseInt(array[4]));
+        List<Contract> list   = contractMapper.getContract(form);
+        return JsonUtil.toJson(list);
     }
 
 

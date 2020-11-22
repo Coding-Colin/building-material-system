@@ -15,8 +15,7 @@
         <div class="layui-card-body ">
             <form class="layui-form layui-col-space5">
                 <div class="layui-input-inline layui-show-xs-block">
-                    <input type="text"  id="name" placeholder="请输入合同名字" autocomplete="off"
-                           class="layui-input">
+                    <input type="text"  id="htname" placeholder="请输入合同名字" autocomplete="off"  class="layui-input">
                 </div>
                 <div class="layui-input-inline layui-show-xs-block">
                     <input class="layui-input" placeholder="开始日期" name="start" id="start">
@@ -24,10 +23,9 @@
                 <div class="layui-input-inline layui-show-xs-block">
                     <input class="layui-input" placeholder="结束日期" name="end" id="end">
                 </div>
-
                 <div class="layui-input-inline layui-show-xs-block">
                     <select name="contrller" id="stauts">
-                        <option value="合同已生效" selected>请选择</option>
+                        <option value="合同已生效" selected>合同已生效</option>
                         <option value="已付定金">已付定金</option>
                         <option value="已付尾款">已付尾款</option>
                         <option value="已返还材料">已返还材料</option>
@@ -78,7 +76,7 @@
                         <div class="form-group">
                             <select class="form-control" id="audit">
                                 <option value="合同已生效" selected>请选择</option>
-                                <option value="已付定金">已付定金</option>
+                                <option value="已付定金" >已付定金</option>
                                 <option value="已付尾款">已付尾款</option>
                                 <option value="已返还材料">已返还材料</option>
                                 <option value="审批失败">审批失败</option>
@@ -155,14 +153,13 @@
     }
 
     function currentPage(currentPage) {
-        var params = {
-            "title": $("#username").val(),
-            "signDate": $("#start").val(),
-            "endDate": $("#end").val(),
-            "audit": $("#stauts").val(),
-            "pageNum": currentPage,
-            "pageSize": 5
-        };
+        var params = [
+            $("#htname").val(),
+            $("#start").val(),
+            $("#end").val(),
+            $("#stauts").val(),
+            currentPage,
+        ];
 
         $.ajax({
             type: "POST",

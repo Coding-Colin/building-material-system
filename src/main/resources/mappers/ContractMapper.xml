@@ -46,7 +46,7 @@
     <select id="getContract" parameterType="com.contract.system.bean.query.ContractQueryForm" resultType="com.contract.system.bean.Contract">
         select * from contract
             where 1=1
-            <if test="contractQueryForm.signDate !=null">
+            <if test="contractQueryForm.signDate!=null">
                 and signDate &gt; #{signDate}
             </if>
             <if test="contractQueryForm.endDate!=null">
@@ -58,6 +58,7 @@
             <if test="contractQueryForm.status!=null and contractQueryForm.status != ''">
                 and audit=#{contractQueryForm.status}
             </if>
+        limit #{contractQueryForm.page},5
     </select>
 
     <!--根据uuid查询-->

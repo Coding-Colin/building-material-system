@@ -10,6 +10,7 @@ public class ContractQueryForm {
     private Date startDate;
     private Date endDate;
     private String status;
+    private int page;
 
     public String getName() {
         return name;
@@ -41,5 +42,13 @@ public class ContractQueryForm {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 }
