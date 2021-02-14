@@ -20,7 +20,7 @@ public interface ContractMapper {
      * 合同条件查询
      * @return
      */
-    public List<Contract> getContract(ContractQueryForm contractQueryForm);
+    public List<Contract> getContract(@Param("contractQueryForm") ContractQueryForm contractQueryForm);
 
     /**
      * 根据登录用户查询（员工端）

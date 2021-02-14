@@ -320,7 +320,7 @@ public class AdminController {
         form.setEndDate("".equals(array[2]) ? null : DateUtil.parse(array[1]));
         form.setStatus(array[3]);
         form.setPage("".equals(array[4]) ? 0 : Integer.parseInt(array[4]));
-        List<Contract> list   = contractMapper.getContract(form);
+        List<Contract> list  = contractMapper.getContract(form);
         return JsonUtil.toJson(list);
     }
 

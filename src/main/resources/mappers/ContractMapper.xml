@@ -46,17 +46,17 @@
     <select id="getContract" parameterType="com.contract.system.bean.query.ContractQueryForm" resultType="com.contract.system.bean.Contract">
         select * from contract
             where 1=1
-            <if test="contractQueryForm.signDate!=null">
-                and signDate &gt; #{signDate}
+            <if test="contractQueryForm.startDate!=null">
+                and signDate &gt; #{contractQueryForm.startDate}
             </if>
             <if test="contractQueryForm.endDate!=null">
-                and endDate  &lt; #{endDate}
+                and endDate  &lt; #{contractQueryForm.endDate}
             </if>
-            <if test="contractQueryForm.name!=null and contractQueryForm.name != ''">
+            <if test="contractQueryForm.name!=null">
                 and title like concat('%',#{contractQueryForm.name},'%')
             </if>
             <if test="contractQueryForm.status!=null and contractQueryForm.status != ''">
-                and audit=#{contractQueryForm.status}
+                and status=#{contractQueryForm.status}
             </if>
         limit #{contractQueryForm.page},5
     </select>

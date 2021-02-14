@@ -6,11 +6,12 @@ import java.util.Date;
  * 查询bean
  */
 public class ContractQueryForm {
-    private String name;
-    private Date startDate;
-    private Date endDate;
-    private String status;
-    private int page;
+
+    public String name;
+    public Date startDate;
+    public Date endDate;
+    public String status;
+    public int page;
 
     public String getName() {
         return name;

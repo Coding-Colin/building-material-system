@@ -11,12 +11,12 @@
 
     <!--查询所有page-->
     <select id="getAllByPage" resultType="com.contract.system.bean.Person">
-        select * from person limit #{page},5
+        select * from person limit #{page},50
     </select>
 
     <!--根据name查询-->
     <select id="getByName" resultType="com.contract.system.bean.Person" parameterType="java.lang.String">
-        select * from person where name like concat('%',concat(#{dto.name},'%'))
+        select * from person where name like concat('%',concat(#{name},'%'))
     </select>
 
     <!--  新增  -->

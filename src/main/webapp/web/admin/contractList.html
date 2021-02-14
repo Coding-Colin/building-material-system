@@ -160,20 +160,19 @@
             $("#stauts").val(),
             currentPage,
         ];
-
-        $.ajax({
-            type: "POST",
-            url: "/getContract.do",
-            dataType: "json",
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify(params),
-            success: function (data) {
-                var html = show(data.list);
-                // size = data.size;
-                // ss(size);
-                $("#contentdiv").html(html);
-            }
-        });
+        if (currentPage != 1){
+            $.ajax({
+                type: "POST",
+                url: "/getContract.do",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                data: JSON.stringify(params),
+                success: function (data) {
+                    var html = show(data);
+                    $("#contentdiv").html(html);
+                }
+            });
+        }
     }
 
     window.onload = function () {
@@ -262,6 +261,26 @@
         var today = date.getFullYear() + "-" + (month) + "-" + (day);
         return today;
     }
+
+
+    $("#select_btn").click(function () {
+        var v1 = $("#htname").val();
+        var v2 = $("#start").val();
+        var v3 = $("#end").val();
+        var v4 = $("#stauts").val();
+        var array = [v1,v2,v3,v4,0];
+        $.ajax({
+            type: "POST",
+            url: "/getContract.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(array),
+            success: function (data) {
+                var html = show(data);
+                $("#contentdiv").html(html);
+            }
+        });
+    })
 
 </script>
 </body>
