@@ -68,15 +68,24 @@
         select * from contract where uuid like concat('%',concat(#{uuid},'%'))
     </select>
 
-
     <!--更新全部合同资料-->
     <update id="update" parameterType="com.contract.system.bean.Contract">
         update contract set uuid=#{uuid},title=#{title},content=#{content},num=#{num},accounts=#{accounts},endDate=#{endDate},clientele=#{clientele},status=#{status},materials=#{materials} where id=#{id}
     </update>
+
     <!--根据id删除-->
     <delete id="deleteById" parameterType="java.lang.Integer">
         delete from contract where id=#{id}
     </delete>
+
+    <!--根据uuid查询-->
+    <select id="queryCountByStatus" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from contract where 1=1
+        <if test="status != null">
+            and status = #{status}
+        </if>
+    </select>
+
 </mapper>
 
 

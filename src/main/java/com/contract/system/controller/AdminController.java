@@ -478,6 +478,9 @@ public class AdminController {
         Map<String,Integer> map = new HashMap<String, Integer>();
         SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/dd");
         for (int i=0;i<list.size();i++){
+            if (null == list.get(i).signDate){
+                continue;
+            }
             String timeFormat = sdf.format(list.get(i).signDate);
             if (!map.containsKey(timeFormat)){
                 map.put(timeFormat,list.get(i).accounts);
@@ -495,6 +498,9 @@ public class AdminController {
             String heng = String.valueOf(dd[i]);
             int aa = 0;//总金额
             for (int j=0;j<list.size();j++){
+                if (list.get(j).signDate == null){
+                    continue;
+                }
                 String timeFormat = sdf.format(list.get(j).signDate);
                 if (heng.equals(timeFormat)){
                     aa += list.get(j).accounts;//总金额
@@ -517,5 +523,34 @@ public class AdminController {
         model.addAttribute("logs",logs);
         return "admin/logsList";
     }
+
+    @RequestMapping("statusHtml.do")
+    public String statusHtml(){
+        return "admin/statusReport";
+    }
+
+    /**
+     * 状态报表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/callStatusReport.do")
+    public String callStatusReport(){
+        List<Map<String,Object>> result = new ArrayList<>();
+        Map<String,Object> m1 = new HashMap<>();
+        m1.put("name","合同总量");
+        m1.put("value",contractMapper.queryCountByStatus(null));
+        Map<String,Object> m2 = new HashMap<>();
+        m2.put("name","审核成功");
+        m2.put("value",contractMapper.queryCountByStatus("审核成功"));
+        Map<String,Object> m3 = new HashMap<>();
+        m3.put("name","审核失败");
+        m3.put("value",contractMapper.queryCountByStatus("审核失败"));
+        result.add(m1);
+        result.add(m2);
+        result.add(m3);
+        return JsonUtil.toJson(result);
+    }
+
 }
 
