@@ -188,7 +188,7 @@
             }
         });
     };
-
+    //下载文件
     function downloadcontract(e) {
         window.location.href = "/cdownloadcontract/"+ e + '.do';
     }
@@ -268,13 +268,18 @@
         var v2 = $("#start").val();
         var v3 = $("#end").val();
         var v4 = $("#stauts").val();
-        var array = [v1,v2,v3,v4,0];
         $.ajax({
             type: "POST",
             url: "/getContract.do",
             dataType: "json",
             contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify(array),
+            data: JSON.stringify({
+                name: v1,
+                startDate: v2,
+                endDate: v3,
+                status: v4,
+                page: 0
+            }),
             success: function (data) {
                 var html = show(data);
                 $("#contentdiv").html(html);

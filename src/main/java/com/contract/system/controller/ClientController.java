@@ -39,7 +39,7 @@ public class ClientController {
     public static String REAL_PATH = "src/main/webapp/resource/files/";
     public static String LOGINUSER = "";
     public static String AUTHER_NAME = "";
-    public static final  String DOWNLOADPATH = "D:\\graduate\\";
+    public static final  String DOWNLOADPATH = "E:\\building-material-system\\";
     /**
      * 首页
      * @return
@@ -180,7 +180,7 @@ public class ClientController {
                         //更新建材
                         int remain = materials1.num-Integer.parseInt(mnum[i]);
                         if (remain<0){
-                            return JsonUtil.toJson(materials1.name+"材料不足,请补充库存在重试");
+                            return JsonUtil.toJson(EncodingTool.encodeStr(materials1.name+"材料不足,请补充库存在重试"));
                         }
                         accounts += Integer.parseInt(mnum[i])*materials1.price;//计算总价值
                         materials1.setNum(remain);

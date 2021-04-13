@@ -121,7 +121,7 @@
         element.init();
     });
 
-    //修改模态框的文字
+    //修改框的文字
     $("#adduserbtn").click(function () {
         $("#myModalLabel").html("添加用户");
         $("#ubtn").text("添加");
@@ -134,6 +134,7 @@
         $("#apsw").val('');
     });
 
+    //分页插件
     function ss(e){
         $("#pager").zPager({
             totalData: e,
@@ -177,6 +178,7 @@
         });
     };
 
+    //页面内容拼接显示
     function show(data){
         console.log("people"+data)
         var html = '';

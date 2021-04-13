@@ -146,6 +146,7 @@
         });
     };
 
+    //分页插件
     function ss(e) {
         $("#pager").zPager({
             totalData: e,
@@ -187,7 +188,7 @@
         });
     });
 
-
+    //查询建材选项
     function getAllSelect(materdata) {
         $(".materialstype").empty(); //清空select
         for (var i = 0; i < materdata.length; i++) {
@@ -198,6 +199,7 @@
         }
     }
 
+    //新增合同中的添加建材
     $("#addmaterialsbtn").click(function () {
         var id = getMaterDivNum();
         var html = '<div class="form-group materdiv" id="div' + id + '">';
@@ -252,6 +254,7 @@
         return array;
     }
 
+    //合同管理页面显示
     function show(data) {
         $("#contentdiv").html("");
         var html = '';
@@ -277,7 +280,7 @@
             }
             else {
                 html += '<a class="layui-btn  layui-btn-radius layui-disabled" onclick="bianji(' + data[i].id + ')">编辑</a>';
-                html += '<a class="layui-btn layui-btn-primary layui-btn-radius  layui-disabled" onclick="shanchu(' + data[i].id + ')">删除</a>';
+                html += '<a class="layui-btn layui-btn-primary layui-btn-radius" onclick="shanchu(' + data[i].id + ')">删除</a>';
             }
             html += '</td>';
             html += '</tr>';
@@ -286,7 +289,7 @@
     }
 
 
-
+    //文件下载
     function downloadcontract(e) {
         window.location.href = "/cdownloadcontract/"+ e + '.do';
     }
