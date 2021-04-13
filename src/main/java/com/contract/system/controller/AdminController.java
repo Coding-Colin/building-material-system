@@ -39,6 +39,9 @@ public class AdminController {
     @Autowired
     public UserMapper userMapper;
 
+    @Autowired
+    public LogsMapper logsMapper;
+
     public static String endDate = "";
     public static String signDate = "";
 
@@ -503,7 +506,14 @@ public class AdminController {
         result.put("ff",0);
         result.put("ww",0);
         return JsonUtil.toJson(result);
+    }
 
+    //新增内容
+    @RequestMapping("logsHtml.do")
+    public String logsHtml(Model model){
+        List<Logs> logs = logsMapper.getAll();
+        model.addAttribute("logs",logs);
+        return "admin/logsList";
     }
 }
 

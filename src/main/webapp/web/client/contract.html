@@ -29,18 +29,18 @@
         <table class="layui-table" lay-skin="line">
             <thead>
             <tr>
-                <th>#</th>
-                <th>合同编号</th>
-                <th>标题</th>
-                <th>客户</th>
-                <th>建材材料</th>
-                <th>总金额</th>
-                <th>到期日</th>
-                <th>签署日期</th>
-                <th>经手人</th>
-                <th>状态</th>
-                <th>合同下载</th>
-                <th>操作</th>
+                <th width="5%">#</th>
+                <th width="8%">合同编号</th>
+                <th width="10%">标题</th>
+                <th width="11%">客户</th>
+                <th width="10%">建材材料</th>
+                <th width="5%">总金额</th>
+                <th width="10%">到期日</th>
+                <th width="10%">签署日期</th>
+                <th width="10%">经手人</th>
+                <th width="10%">状态</th>
+                <th width="8%">合同下载</th>
+                <th width="30%">操作</th>
             </tr>
             </thead>
             <tbody id="contentdiv">
@@ -260,20 +260,20 @@
         var html = '';
         for (var i = 0; i < data.length; i++) {
             html += '<tr>'
-            html += '<td>' + data[i].id + '</td>';
-            html += '<td>' + data[i].uuid + '</td>';
-            html += '<td>' + data[i].title + '</td>';
-            html += '<td>' + data[i].clientele + '</td>';
-            html += '<td>'+data[i].content+'</td>';
-            html += '<td>' + data[i].accounts + '</td>';
-            html += '<td>' + formatDate(data[i].endDate) + '</td>';
-            html += '<td>' + formatDate(data[i].signDate) + '</td>';
-            html += '<td>' + data[i].author + '</td>';
-            html += '<td>'+data[i].status+'</td>';
-            html += '<td>';
+            html += '<td width="5%">' + data[i].id + '</td>';
+            html += '<td width="8%">' + data[i].uuid + '</td>';
+            html += '<td width="10%">' + data[i].title + '</td>';
+            html += '<td width="11%">' + data[i].clientele + '</td>';
+            html += '<td width="10%">'+data[i].content+'</td>';
+            html += '<td width="5%">' + data[i].accounts + '</td>';
+            html += '<td width="10%">' + formatDate(data[i].endDate) + '</td>';
+            html += '<td width="10%">' + formatDate(data[i].signDate) + '</td>';
+            html += '<td width="10%">' + data[i].author + '</td>';
+            html += '<td width="10%">'+data[i].status+'</td>';
+            html += '<td width="8%">';
             html += '<a class="layui-btn  layui-btn-radius downcontract" onclick="downloadcontract(' + data[i].id + ')">下载合同</a>';
             html += '</td>';
-            html += '<td>';
+            html += '<td width="30%">';
             if (data[i].status == '合同已生效') {
                 html += '<a class="layui-btn  layui-btn-radius selectcontract" onclick="bianji(' + data[i].id + ')" data-toggle="modal" data-target="#myModal">编辑</a>';
                 html += '<a class="layui-btn layui-btn-primary layui-btn-radius deletecontract" onclick="shanchu(' + data[i].id + ')">删除</a>';
