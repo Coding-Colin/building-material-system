@@ -7,7 +7,6 @@ import com.contract.system.bean.Materials;
 import com.contract.system.bean.User;
 import com.contract.system.mapper.*;
 import com.contract.system.util.*;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -454,5 +453,12 @@ public class ClientController {
 		String keyWord = params.getString("keyWord");
 		return JsonUtil.toJson(materialsMapper.queryByKeyWord(keyWord));
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "searchPerson", method = RequestMethod.GET)
+	public String searchPerson() {
+		return JsonUtil.toJson(personMapper.getAll());
+	}
+
 
 }

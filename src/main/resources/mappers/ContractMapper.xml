@@ -45,20 +45,22 @@
     <!--组合查询-->
     <select id="getContract" parameterType="com.contract.system.bean.query.ContractQueryForm" resultType="com.contract.system.bean.Contract">
         select * from contract
-            where 1=1
-            <if test="startDate!=null">
-                and DATE_FORMAT(signDate,'%Y-%m-%d') &gt; DATE_FORMAT(#{startDate},'%Y-%m-%d')
-            </if>
-            <if test="endDate!=null">
-                and DATE_FORMAT(signDate,'%Y-%m-%d') &lt; DATE_FORMAT(#{endDate},'%Y-%m-%d')
-            </if>
-            <if test="name!=null">
-                and title like concat('%',#{name},'%')
-            </if>
-            <if test="status!=null and status != ''">
-                and status=#{status}
-            </if>
-        limit #{page},5
+        where 1=1
+        <if test="startDate!=null">
+            and DATE_FORMAT(signDate,'%Y-%m-%d') &gt; DATE_FORMAT(#{startDate},'%Y-%m-%d')
+        </if>
+        <if test="endDate!=null">
+            and DATE_FORMAT(signDate,'%Y-%m-%d') &lt; DATE_FORMAT(#{endDate},'%Y-%m-%d')
+        </if>
+        <if test="name!=null">
+            and title like concat('%',#{name},'%')
+        </if>
+        <if test="status!=null and status != ''">
+            and status=#{status}
+        </if>
+        <if test="page != null ">
+            limit #{page},5
+        </if>
     </select>
 
     <!--根据uuid查询-->

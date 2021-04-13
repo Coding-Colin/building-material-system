@@ -18,10 +18,10 @@
                     <input type="text"  id="htname" placeholder="请输入合同名字" autocomplete="off"  class="layui-input">
                 </div>
                 <div class="layui-input-inline layui-show-xs-block">
-                    <input class="layui-input" placeholder="开始日期" name="start" id="start">
+                    <input class="layui-input" placeholder="开始日期" type="date" name="start" id="start">
                 </div>
                 <div class="layui-input-inline layui-show-xs-block">
-                    <input class="layui-input" placeholder="结束日期" name="end" id="end">
+                    <input class="layui-input" placeholder="结束日期" type="date" name="end" id="end">
                 </div>
                 <div class="layui-input-inline layui-show-xs-block">
                     <select name="contrller" id="stauts">
@@ -75,7 +75,8 @@
                     <form>
                         <div class="form-group">
                             <select class="form-control" id="audit">
-                                <option value="合同已生效" selected>请选择</option>
+                                <option value="" selected>请选择</option>
+                                <option value="合同已生效">合同已生效</option>
                                 <option value="已付定金" >已付定金</option>
                                 <option value="已付尾款">已付尾款</option>
                                 <option value="已返还材料">已返还材料</option>
@@ -103,46 +104,6 @@
         element.init();
     });
 
-
-
-    layui.use(['laydate', 'form'],
-        function () {
-            var laydate = layui.laydate;
-            laydate.render({
-                elem: '#start',
-                format: 'yyyy-MM-dd',
-                done: function (value, date, endDate) {
-                    var startDate = new Date(value).getTime();
-                    var endTime = new Date($('#end').val()).getTime();
-                    if (endTime != "" && startDate != "") {
-                        if (endTime < startDate) {
-                            layer.msg('结束时间不能小于开始时间');
-                            $('#start').val($('#end').val());
-                        }
-                    }
-                }
-            });
-        });
-
-    layui.use(['laydate', 'form'],
-        function () {
-            var laydate = layui.laydate;
-            laydate.render({
-                elem: '#end', //指定元素
-                format: 'yyyy-MM-dd',
-                done: function (value, date, endDate) {
-                    var startDate = new Date($('#start').val()).getTime();
-                    var endTime = new Date(value).getTime();
-                    if (endTime != "" && startDate != "") {
-                        if (endTime < startDate) {
-                            layer.msg('结束时间不能小于开始时间');
-                            $('#end').val($('#start').val());
-                        }
-                    }
-                }
-            });
-        });
-
     function ss(e) {
         $("#pager").zPager({
             totalData: e,
@@ -153,26 +114,22 @@
     }
 
     function currentPage(currentPage) {
-        var params = [
-            $("#htname").val(),
-            $("#start").val(),
-            $("#end").val(),
-            $("#stauts").val(),
-            currentPage,
-        ];
-        if (currentPage != 1){
-            $.ajax({
-                type: "POST",
-                url: "/getContract.do",
-                dataType: "json",
-                contentType: "application/json;charset=UTF-8",
-                data: JSON.stringify(params),
-                success: function (data) {
-                    var html = show(data);
-                    $("#contentdiv").html(html);
-                }
-            });
-        }
+        $.ajax({
+            type: "POST",
+            url: "/getContract.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify({
+                name: $("#htname").val(),
+                startDate: $("#start").val(),
+                endDate: $("#end").val(),
+                page: currentPage
+            }),
+            success: function (data) {
+                var html = show(data);
+                $("#contentdiv").html(html);
+            }
+        });
     }
 
     window.onload = function () {
@@ -184,7 +141,7 @@
                 var html = show(data.logs);
                 size = data.size;
                 ss(size);
-                $("#contentdiv").html(html);
+                // $("#contentdiv").html(html);
             }
         });
     };
@@ -267,7 +224,6 @@
         var v1 = $("#htname").val();
         var v2 = $("#start").val();
         var v3 = $("#end").val();
-        var v4 = $("#stauts").val();
         $.ajax({
             type: "POST",
             url: "/getContract.do",
@@ -277,7 +233,6 @@
                 name: v1,
                 startDate: v2,
                 endDate: v3,
-                status: v4,
                 page: 0
             }),
             success: function (data) {

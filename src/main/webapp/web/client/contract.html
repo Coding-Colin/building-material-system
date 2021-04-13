@@ -78,7 +78,8 @@
                     </div>
                     <div class="form-group">
                         <label for="clientele">客户</label>
-                        <input type="text" class="form-control" id="clientele">
+                        <select id="clientele" class="form-control">
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="accounts">合同金额</label>
@@ -158,7 +159,7 @@
     }
 
     function currentPage(currentPage) {
-        var array = [currentPage - 1,$("#inputdiv").val()];
+        var array = [currentPage - 1, $("#inputdiv").val()];
         $.ajax({
             type: "POST",
             url: "/contract.do",
@@ -173,7 +174,7 @@
     }
 
     $("#inputbtn").click(function () {
-        var array = [0,$("#inputdiv").val()];
+        var array = [0, $("#inputdiv").val()];
         $.ajax({
             type: "POST",
             url: "/contract.do",
@@ -219,8 +220,7 @@
     function removematerdiv(e) {
         if (getMaterDivNum() == 1) {
             alert("建材不能为空！");
-        }
-        else {
+        } else {
             var divid = "#div" + e;
             $(divid).empty();
         }
@@ -264,12 +264,12 @@
             html += '<td width="8%">' + data[i].uuid + '</td>';
             html += '<td width="10%">' + data[i].title + '</td>';
             html += '<td width="11%">' + data[i].clientele + '</td>';
-            html += '<td width="10%">'+data[i].content+'</td>';
+            html += '<td width="10%">' + data[i].content + '</td>';
             html += '<td width="5%">' + data[i].accounts + '</td>';
             html += '<td width="10%">' + formatDate(data[i].endDate) + '</td>';
             html += '<td width="10%">' + formatDate(data[i].signDate) + '</td>';
             html += '<td width="10%">' + data[i].author + '</td>';
-            html += '<td width="10%">'+data[i].status+'</td>';
+            html += '<td width="10%">' + data[i].status + '</td>';
             html += '<td width="8%">';
             html += '<a class="layui-btn  layui-btn-radius downcontract" onclick="downloadcontract(' + data[i].id + ')">下载合同</a>';
             html += '</td>';
@@ -277,8 +277,7 @@
             if (data[i].status == '合同已生效') {
                 html += '<a class="layui-btn  layui-btn-radius selectcontract" onclick="bianji(' + data[i].id + ')" data-toggle="modal" data-target="#myModal">编辑</a>';
                 html += '<a class="layui-btn layui-btn-primary layui-btn-radius deletecontract" onclick="shanchu(' + data[i].id + ')">删除</a>';
-            }
-            else {
+            } else {
                 html += '<a class="layui-btn  layui-btn-radius layui-disabled" onclick="bianji(' + data[i].id + ')">编辑</a>';
                 html += '<a class="layui-btn layui-btn-primary layui-btn-radius" onclick="shanchu(' + data[i].id + ')">删除</a>';
             }
@@ -291,7 +290,7 @@
 
     //文件下载
     function downloadcontract(e) {
-        window.location.href = "/cdownloadcontract/"+ e + '.do';
+        window.location.href = "/cdownloadcontract/" + e + '.do';
     }
 
     function bianji(e) {
@@ -373,6 +372,22 @@
         $("#clientele").val('');
         $("#accounts").val('');
 
+        //客户动态显示
+        $("#clientele").empty();
+        $.ajax({
+            type: "GET",
+            url: "/searchPerson.do",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                var html = '';
+                for (var i = 0; i < data.length; i++) {
+                    html += '<option value="' + data[i].name + '">' + data[i].name + '</option>';
+                }
+                $("#clientele").html(html);
+            }
+        });
+
     });
 
     //公用按钮
@@ -380,8 +395,7 @@
         var val = $("#ubtn").text();
         if (val == '添加') {
             add();
-        }
-        else if (val == '更新') {
+        } else if (val == '更新') {
             update();
         }
     });

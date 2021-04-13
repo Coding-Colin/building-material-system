@@ -317,6 +317,8 @@ public class AdminController {
     @ResponseBody
     @RequestMapping("/getContract.do")
     public String getContract(@RequestBody ContractQueryForm form){
+        Integer page = form.getPage();
+        form.setPage(page < 1 ? 0 : (page-1) * 5);
         List<Contract> list  = contractMapper.getContract(form);
         return JsonUtil.toJson(list);
     }
