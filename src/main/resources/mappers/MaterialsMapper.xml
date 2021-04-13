@@ -11,9 +11,8 @@
         select * from materials where id=#{id}
     </select>
 
-    <!--根据uuid查询-->
     <select id="getByName" parameterType="java.lang.String" resultType="com.contract.system.bean.Materials">
-        select * from materials where name like "%"#{name}"%"
+        select * from materials where name like concat("%",#{name},"%")
     </select>
     <!--根据uuid查询-->
     <select id="getByName1" parameterType="com.contract.system.bean.entity.MaterialsDto" resultType="com.contract.system.bean.Materials">
@@ -49,6 +48,10 @@
     <delete id="deleteById" parameterType="java.lang.Integer">
         delete from materials where id=#{id}
     </delete>
+
+    <select id="queryByKeyWord" parameterType="java.lang.String" resultType="com.contract.system.bean.Materials">
+        select * from materials where name like concat("%",#{keyWord},"%")
+    </select>
 
 </mapper>
 

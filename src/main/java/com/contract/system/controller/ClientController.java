@@ -1,4 +1,5 @@
 package com.contract.system.controller;
+import com.alibaba.fastjson.JSONObject;
 import com.contract.system.bean.Contract;
 import com.contract.system.bean.Materials;
 import com.contract.system.bean.User;
@@ -7,6 +8,7 @@ import com.contract.system.mapper.MaterialsMapper;
 import com.contract.system.mapper.PersonMapper;
 import com.contract.system.mapper.UserMapper;
 import com.contract.system.util.*;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -434,6 +436,15 @@ public class ClientController {
         result.put("ff",ff);//已付款
         result.put("ww",ww);//未付款
         return JsonUtil.toJson(result);
+    }
+
+
+    //新增内容
+    @ResponseBody
+    @RequestMapping(value = "searchMaterials",method = RequestMethod.POST)
+    public String searchMaterials(@RequestBody JSONObject params){
+        String keyWord = params.getString("keyWord");
+        return JsonUtil.toJson(materialsMapper.queryByKeyWord(keyWord));
     }
 
 }

@@ -57,4 +57,6 @@ public interface MaterialsMapper {
      *
      */
     public void deleteById(Integer id);
+
+    List<Materials> queryByKeyWord(String keyWord);
 }
