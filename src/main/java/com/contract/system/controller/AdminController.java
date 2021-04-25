@@ -542,10 +542,10 @@ public class AdminController {
         m1.put("value",contractMapper.queryCountByStatus(null));
         Map<String,Object> m2 = new HashMap<>();
         m2.put("name","审核成功");
-        m2.put("value",contractMapper.queryCountByStatus("审核成功"));
+        m2.put("value",contractMapper.queryCountByStatus(Arrays.asList("合同已生效","已付定金","已付尾款")));
         Map<String,Object> m3 = new HashMap<>();
         m3.put("name","审核失败");
-        m3.put("value",contractMapper.queryCountByStatus("审核失败"));
+        m3.put("value",contractMapper.queryCountByStatus(Arrays.asList("已返还材料")));
         result.add(m1);
         result.add(m2);
         result.add(m3);

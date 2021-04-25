@@ -83,6 +83,6 @@ public interface ContractMapper {
      */
     public void deleteById(Integer id);
 
-    int queryCountByStatus(@Param("status") String status);
+    int queryCountByStatus(@Param("status") List<String> status);
 
 }
