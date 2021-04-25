@@ -21,7 +21,7 @@
 <h1 align="center"><strong>建材合同系统-员工端</strong></h1>
 <br><br><br><br><br>
 <br><br><br><br><br>
-<div class="layui-col-lg-offset2">
+<div class="layui-col-lg-offset1">
     <div class="layui-col-md2">
         <h2>
             <strong>
@@ -67,6 +67,16 @@
     <div class="layui-col-md2">
         <h2>
             <strong>
+                状态报表
+            </strong>
+        </h2><br><br>
+        <div class="layui-anim layui-anim-up layui-anim-rotate">
+            <img src="resource/others/img/status.ico" width="120px" height="120px" id="img7">
+        </div>
+    </div>
+    <div class="layui-col-md2">
+        <h2>
+            <strong>
                 退出
             </strong>
         </h2><br><br>
@@ -95,6 +105,9 @@
     });
     $("#img6").click(function () {
         window.location.href = "/quit.do";
+    });
+    $("#img7").click(function () {
+        window.location.href = "/clientStatusHtml.do";
     });
 
 </script>

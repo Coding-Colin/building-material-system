@@ -461,4 +461,33 @@ public class ClientController {
 	}
 
 
+	@RequestMapping("clientStatusHtml.do")
+	public String statusHtml(){
+		return "client/statusReport";
+	}
+
+	/**
+	 * 状态报表
+	 *
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/clientStatusReport.do")
+	public String callStatusReport(HttpSession session) {
+		String loginUser = String.valueOf(session.getAttribute("loginUser"));
+		List<Map<String, Object>> result = new ArrayList<>();
+		Map<String, Object> m1 = new HashMap<>();
+		m1.put("name", "合同总量");
+		m1.put("value", contractMapper.queryCountByStatusByUser(loginUser,null));
+		Map<String, Object> m2 = new HashMap<>();
+		m2.put("name", "审核成功");
+		m2.put("value", contractMapper.queryCountByStatusByUser(loginUser, Arrays.asList("合同已生效", "已付定金", "已付尾款")));
+		Map<String, Object> m3 = new HashMap<>();
+		m3.put("name", "审核失败");
+		m3.put("value", contractMapper.queryCountByStatusByUser(loginUser, Arrays.asList("已返还材料")));
+		result.add(m1);
+		result.add(m2);
+		result.add(m3);
+		return JsonUtil.toJson(result);
+	}
 }
